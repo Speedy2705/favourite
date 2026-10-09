@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import { PlaceholderImage } from './PlaceholderImage'
 
 function HeartSky({ backdrop = false }: { backdrop?: boolean }) {
   return <div className={`heart-sky${backdrop ? ' heart-sky--backdrop' : ''}`} aria-hidden="true">
@@ -82,21 +83,21 @@ export function LoveNote({ onSent }: { onSent: () => void }) {
   return (
     <section id="your-note" className="section love-note-section">
       <span className="love-note-ornament" aria-hidden="true">✦ ♡ ✦</span>
-      <p className="eyebrow">One last little thing</p>
-      <h2>Now, a little of <em>your heart.</em></h2>
-      <p>Did this little corner of us make you smile? Tell me what you loved, what you felt, or anything your heart wants to say. I’d love to keep your words, too.</p>
-      <button ref={triggerRef} className="love-button" type="button" onClick={open}>Leave me a little note <span aria-hidden="true">♡</span></button>
+      <p className="eyebrow">One last thing, my love</p>
+      <h2>Did I make <em>you smile?</em></h2>
+      <p>I wish I could see your face after this little surprise. Tell me how it made you feel, what you miss about us, or anything you wish you could say in person. I’m right here, listening.</p>
+      <button ref={triggerRef} className="love-button" type="button" onClick={open}>Send me a little love <span aria-hidden="true">♡</span></button>
       <dialog ref={dialogRef} className="love-dialog" aria-labelledby="love-dialog-title" aria-describedby="love-dialog-description" onCancel={(event) => { if (sendingRef.current) event.preventDefault() }} onClick={(event) => { if (event.target === event.currentTarget) close() }}>
         <div className="love-dialog-inner">
           <HeartSky />
           <button type="button" className="love-dialog-close" onClick={close} disabled={sending} aria-label="Close note">×</button>
           <span className="love-note-ornament" aria-hidden="true">✧ ♡ ♥ ♡ ✧</span>
           <p className="eyebrow">From your heart to mine</p>
-          <h2 id="love-dialog-title">Your words belong here.</h2>
-          <p id="love-dialog-description">A thought, a feeling, a tiny wish — I’m listening to every word.</p>
+          <h2 id="love-dialog-title">A little closer, in your words.</h2>
+          <p id="love-dialog-description">Something you miss, a wish for our next hello, or just a little love — tell me.</p>
           <form onSubmit={submit} aria-busy={sending}>
-            <label htmlFor="love-message">What did your heart think?</label>
-            <textarea id="love-message" name="message" required maxLength={5000} rows={6} value={message} onChange={(event) => setMessage(event.target.value)} disabled={sending} placeholder="Being here made me feel…" aria-describedby={error ? 'love-note-error' : undefined} />
+            <label htmlFor="love-message">What would you tell me if I were beside you?</label>
+            <textarea id="love-message" name="message" required maxLength={5000} rows={6} value={message} onChange={(event) => setMessage(event.target.value)} disabled={sending} placeholder="Your little surprise made me feel…" aria-describedby={error ? 'love-note-error' : undefined} />
             {error && <p id="love-note-error" className="love-note-error" role="alert">{error}</p>}
             <button className="love-button" type="submit" disabled={sending}>{sending ? 'Sending your little note…' : 'Send with love ♡'}</button>
             <p className="love-note-footnote" role="status">Just your words, sent straight to my inbox.</p>
@@ -107,7 +108,9 @@ export function LoveNote({ onSent }: { onSent: () => void }) {
   )
 }
 
-export function LoveThankYou({ onBack }: { onBack: () => void }) {
+type ThankYouPhoto = { src: string; alt: string; caption: string }
+
+export function LoveThankYou({ onBack, photos }: { onBack: () => void; photos: readonly ThankYouPhoto[] }) {
   const reducedMotion = useReducedMotion()
   const headingRef = useRef<HTMLHeadingElement>(null)
 
@@ -115,6 +118,16 @@ export function LoveThankYou({ onBack }: { onBack: () => void }) {
     window.scrollTo({ top: 0, behavior: 'instant' })
     headingRef.current?.focus({ preventScroll: true })
   }, [])
+
+  const memories = photos.filter((photo) => photo.src)
+  const columns = 8
+  const rows = Math.max(4, Math.ceil((memories.length - columns * 2) / 2) + 2)
+  const positions = [
+    ...Array.from({ length: columns }, (_, i) => ({ gridColumn: i + 1, gridRow: 1 })),
+    ...Array.from({ length: rows - 2 }, (_, i) => ({ gridColumn: columns, gridRow: i + 2 })),
+    ...Array.from({ length: columns }, (_, i) => ({ gridColumn: columns - i, gridRow: rows })),
+    ...Array.from({ length: rows - 2 }, (_, i) => ({ gridColumn: 1, gridRow: rows - i - 1 })),
+  ]
 
   return (
     <main className="love-thank-you">
@@ -127,13 +140,20 @@ export function LoveThankYou({ onBack }: { onBack: () => void }) {
       </div>
       <motion.div className="love-thank-you-card" initial={reducedMotion ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }}>
         <span className="love-note-ornament" aria-hidden="true">✦ ♡ ✦</span>
-        <p className="eyebrow">A little note, a whole lot of love</p>
-        <h1 ref={headingRef} tabIndex={-1}>Your words have found<br /><em>their way to me.</em></h1>
-        <p>Whatever you’ve written, know that every word is precious to me. Thank you for sharing a little piece of your heart.</p>
-        <p>I love you for everything you’ve given me — your kindness, your laughter, and all the little ways you make my world feel like home.</p>
-        <p className="love-signature">For all that you are, and all that we are.<br />Always, with love. ♡</p>
-        <button className="love-button" type="button" onClick={onBack}>Back to our little world</button>
+        <p className="eyebrow">Your words made the miles feel smaller</p>
+        <h1 ref={headingRef} tabIndex={-1}>Thank youuu sooo muchhhh,<br /><em>for just being with me.</em></h1>
+        <p>Bas ab jaldi se milna hai tumse kaash kanpur aa pate.</p>
+        <p>Toh phir thik hai kya hua nhi aa paye toh, tum humko bas yaad karo hum samne honge.</p>
+        <p className="love-signature">Baki peeche toh dekho♡</p>
+        <button className="love-button" type="button" onClick={onBack}>Back to your surprise</button>
       </motion.div>
+      <section className="thank-you-scrapbook" aria-label="All our timeline and gallery memories">
+        <div className="scrapbook-wall" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }}>
+          {memories.map((photo, index) => <figure className="scrapbook-photo" key={`${photo.src}-${index}`} style={positions[index]} title={photo.caption}>
+            <PlaceholderImage src={photo.src} alt={photo.alt} />
+          </figure>)}
+        </div>
+      </section>
     </main>
   )
 }

@@ -13,18 +13,21 @@ import { useActiveSection } from './hooks/useActiveSection'
 import { content } from './content'
 import { CelebrationBurst } from './components/CelebrationBurst'
 import { LoadingScreen } from './components/LoadingScreen'
-import { MusicToggle } from './components/MusicToggle'
 import { ScrollProgress } from './components/ScrollProgress'
 import { LoveNote, LoveThankYou } from './components/LoveNote'
 import './App.css'
 
+const thankYouPhotos = [
+  ...content.timeline.map((entry) => ({ src: entry.image, alt: entry.title, caption: entry.title })),
+  ...content.gallery.map((photo) => ({ src: photo.image, alt: photo.title, caption: photo.caption })),
+]
+
 const sections = [
-  { id: 'beginning', label: 'Beginning' },
-  { id: 'days', label: 'Days together' },
+  { id: 'beginning', label: 'Your surprise' },
+  { id: 'days', label: 'Days of us' },
   { id: 'timeline', label: 'Our story' },
-  { id: 'gallery', label: 'Gallery' },
+  { id: 'gallery', label: 'Our memories' },
   { id: 'letter', label: 'A letter' },
-  { id: 'little-things', label: 'Little things' },
   { id: 'keepsake', label: 'Keepsake' },
 ]
 
@@ -39,7 +42,7 @@ function App() {
   const reducedMotion = useReducedMotion()
   const activeSection = useActiveSection(sections.map((section) => section.id))
 
-  if (thankYou) return <div className="app"><BackgroundLayer /><LoveThankYou onBack={() => { window.location.hash = 'your-note' }} /></div>
+  if (thankYou) return <div className="app"><BackgroundLayer /><LoveThankYou photos={thankYouPhotos} onBack={() => { window.location.hash = 'your-note' }} /></div>
 
   return (
     <div className="app">
@@ -60,7 +63,10 @@ function App() {
             </Link>
           ))}
         </nav>
-        <div className="header-actions"><MusicToggle src={content.music.src} label={content.music.label} /></div>
+        <a className="header-love-seal" href="#your-note" aria-label="Leave a little love note">
+          <span className="header-love-seal-copy">sealed with<span>love, always</span></span>
+          <span className="header-love-seal-heart" aria-hidden="true">♡<span>✦</span></span>
+        </a>
       </header>
 
       <main>
@@ -74,7 +80,7 @@ function App() {
             <PlaceholderImage src={content.hero.image.src} className="hero-image" alt={content.hero.image.alt} />
             <span className="character-spark character-spark--one">+</span><span className="character-spark character-spark--two">*</span>
           </motion.div>
-          <span className="hero-stamp">est. 2024<br /><strong>with love</strong></span>
+          <span className="hero-stamp">across the miles<br /><strong>just for you</strong></span>
         </Section>
 
         <DaysCounter startDate={content.counter.startDate} eyebrow={content.counter.eyebrow} title={content.counter.title} titleHighlight={content.counter.titleHighlight} description={content.counter.description} />
@@ -84,13 +90,7 @@ function App() {
           <Letter content={content.letter} />
         </Suspense>
 
-        <Section id="little-things" title="The little things" kicker="01 / collected" className="things-section">
-          <div className="things-grid">
-            {content.littleThings.map((thing, index) => <article key={thing.title} className={`note-card note-card--${['pink', 'lavender', 'gold'][index]}`}><span className="card-number">{String(index + 1).padStart(2, '0')}</span><h3>{thing.title}</h3><p>{thing.description}</p></article>)}
-          </div>
-        </Section>
-
-        <Section id="keepsake" title="Keep this close" kicker="02 / a keepsake" className="keepsake-section">
+        <Section id="keepsake" title="Until I can hold you" kicker="02 / a keepsake" className="keepsake-section">
           <div className="keepsake-layout">
             <PlaceholderImage src={content.keepsake.image.src} className="keepsake-image" alt={content.keepsake.image.alt} />
             <div className="keepsake-quote"><span className="quote-mark">“</span><blockquote>{content.keepsake.quote}</blockquote><p>- {content.keepsake.credit}</p></div>
@@ -99,7 +99,7 @@ function App() {
         <LoveNote onSent={() => { window.location.hash = 'thank-you' }} />
       </main>
 
-      <footer className="site-footer"><span>made for remembering</span><span className="footer-heart">&lt;3</span><span>one day at a time</span></footer>
+      <footer className="site-footer"><span>made for you, with love</span><span className="footer-heart">&lt;3</span><span>until our next hug</span></footer>
     </div>
   )
 }

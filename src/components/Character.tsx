@@ -4,13 +4,12 @@ import { useRef, useState } from 'react'
 type CharacterProps = { activeSection: string; onCelebrate: () => void }
 
 const states: Record<string, { pose: string; message: string }> = {
-  beginning: { pose: 'wave', message: 'hi, Maritreye!' },
-  days: { pose: 'idle', message: 'still counting...' },
-  timeline: { pose: 'walk', message: 'this way!' },
-  gallery: { pose: 'point', message: 'look at this one' },
-  letter: { pose: 'hug', message: 'made with love' },
-  'little-things': { pose: 'idle', message: 'the little things' },
-  keepsake: { pose: 'hug', message: 'keep it close' },
+  beginning: { pose: 'wave', message: 'surprise, my love!' },
+  days: { pose: 'idle', message: 'every day, still you' },
+  timeline: { pose: 'walk', message: 'remember us?' },
+  gallery: { pose: 'point', message: 'a smile for you' },
+  letter: { pose: 'hug', message: 'wish I could say this in person' },
+  keepsake: { pose: 'hug', message: 'a hug from afar' },
 }
 
 export function Character({ activeSection, onCelebrate }: CharacterProps) {
